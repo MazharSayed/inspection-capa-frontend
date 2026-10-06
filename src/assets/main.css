@@ -1,0 +1,36 @@
+:root {
+  --sidebar-bg: #202326;
+  --accent: #b89b6a;
+  --page-bg: #f4f5f9;
+  --card-bg: #ffffff;
+  --text: #1f2328;
+  --text-muted: #6b7280;
+  --border: #e5e7eb;
+  --success: #12b76a;
+  --danger: #f04438;
+  --warning: #f79009;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Segoe UI', Arial, sans-serif;
+  background: var(--page-bg);
+  color: var(--text);
+  font-size: 14px;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+}
+
+select,
+input {
+  font-family: inherit;
+  font-size: 13px;
+}
