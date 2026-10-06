@@ -2,6 +2,8 @@ import { createRouter, createWebHistory } from 'vue-router'
 import InspectionConfigView from '../views/InspectionConfigView.vue'
 import CapaRequestListView from '../views/CapaRequestListView.vue'
 import InspectionRequestDetailView from '../views/InspectionRequestDetailView.vue'
+import InspectionRequestListView from '../views/InspectionRequestListView.vue'
+import WorkInProgressView from '../views/WorkInProgressView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -24,6 +26,18 @@ const router = createRouter({
       name: 'inspection-request-detail',
       component: InspectionRequestDetailView,
       meta: { section: 'capa' },
+    },
+    {
+      path: '/inspection-requests',
+      name: 'inspection-requests',
+      component: InspectionRequestListView,
+      meta: { section: 'requests' },
+    },
+    {
+      path: '/capa-requests/:id',
+      name: 'capa-request-detail',
+      component: WorkInProgressView,
+      meta: { section: 'capa', title: 'CAPA Request Detail' },
     },
   ],
 })
