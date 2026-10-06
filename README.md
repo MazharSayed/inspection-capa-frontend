@@ -1,38 +1,56 @@
-# .
+# Inspection CAPA Frontend
 
-This template should help get you started developing with Vue 3 in Vite.
+Vue 3 frontend for the inspection configuration, CAPA requests and inspection approval screens.
 
-## Recommended IDE Setup
+Backend (Laravel API): https://github.com/MazharSayed/inspection-capa-backend
 
-[VS Code](https://code.visualstudio.com/) + [Vue (Official)](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+## Screens
 
-## Recommended Browser Setup
+- **Inspection Configuration**: filters, search, approval level indicators, and edit and view actions
+- **CAPA Requests List**: 7 filters, search and status badges. The view action opens a work in progress page
+- **Inspection Requests List**: filters, search and approval progress dots
+- **Inspection Request Detail**: request details, documents and the approval timeline
 
-- Chromium-based browsers (Chrome, Edge, Brave, etc.):
-  - [Vue.js devtools](https://chromewebstore.google.com/detail/vuejs-devtools/nhdogjmejiglipccpnnnanhbledajbpd)
-  - [Turn on Custom Object Formatter in Chrome DevTools](http://bit.ly/object-formatters)
-- Firefox:
-  - [Vue.js devtools](https://addons.mozilla.org/en-US/firefox/addon/vue-js-devtools/)
-  - [Turn on Custom Object Formatter in Firefox DevTools](https://fxdx.dev/firefox-devtools-custom-object-formatters/)
+Filters cascade from Project down to Sub-Activity. Each filter unlocks after its parent is chosen and lists only related options. Changing a parent resets the filters below it.
 
-## Customize configuration
+## Stack
 
-See [Vite Configuration Reference](https://vite.dev/config/).
+Vue 3 (Composition API), Vite, Vue Router, Pinia, Axios, plain CSS
 
-## Project Setup
+## Setup
 
-```sh
+Start the backend first (see its README), then:
+
+```bash
 npm install
-```
-
-### Compile and Hot-Reload for Development
-
-```sh
+cp .env.example .env
 npm run dev
 ```
 
-### Compile and Minify for Production
+Open http://localhost:5173. The API URL is set in `.env`:
 
-```sh
-npm run build
 ```
+VITE_API_BASE_URL=http://127.0.0.1:8000/api
+```
+
+Restart `npm run dev` after changing it.
+
+## Project structure
+
+```
+src/
+  api/          one file per API area, all built on a shared axios instance
+  components/   sidebar, filter select, status badge, approval timeline and other shared UI
+  composables/  useCascadingFilters and useFilteredList, shared by the list screens
+  stores/       Pinia store holding the filter dropdown options
+  utils/        date formatting
+  views/        one view per screen
+```
+
+## Screenshots
+
+### Inspection Configuration
+![Inspection Configuration](docs/screenshots/01-inspection-configuration.png)
+
+### CAPA Requests List
+![CAPA Requests
