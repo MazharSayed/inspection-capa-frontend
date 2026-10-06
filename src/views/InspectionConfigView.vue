@@ -20,7 +20,7 @@ const selected = reactive({
 const search = ref('')
 const modal = ref(null)
 
-const { subDivisionOptions, activityOptions } = useCascadingFilters(selected)
+const { divisionOptions, subDivisionOptions, activityOptions, enabled } = useCascadingFilters(selected)
 const { rows, loading, error, load } = useFilteredList(fetchInspectionConfigs, selected, search)
 
 function onSaved(updated) {
@@ -45,9 +45,9 @@ onMounted(async () => {
     <div class="filter-row">
       <span class="filter-label">Filter By</span>
       <FilterSelect v-model="selected.project_id" :options="filters.projects" placeholder="Project" />
-      <FilterSelect v-model="selected.division_id" :options="filters.divisions" placeholder="Division" />
-      <FilterSelect v-model="selected.sub_division_id" :options="subDivisionOptions" placeholder="Sub-Division" />
-      <FilterSelect v-model="selected.activity_id" :options="activityOptions" placeholder="Activity" />
+      <FilterSelect v-model="selected.division_id" :options="divisionOptions" placeholder="Division" :disabled="!enabled.division" />
+      <FilterSelect v-model="selected.sub_division_id" :options="subDivisionOptions" placeholder="Sub-Division" :disabled="!enabled.subDivision" />
+      <FilterSelect v-model="selected.activity_id" :options="activityOptions" placeholder="Activity" :disabled="!enabled.activity" />
     </div>
 
     <p v-if="error" class="state error">{{ error }}</p>
@@ -70,20 +70,7 @@ onMounted(async () => {
           <td class="center"><LevelBadge :active="row.level_qcs" /></td>
           <td class="center"><LevelBadge :active="row.level_qaqc" /></td>
           <td class="center">{{ row.random_inspection_count ?? '-' }}</td>
-          <!-- <td class="center">
-            <button class="icon-btn" title="Edit" @click="modal = { config: row, mode: 'edit' }">
-              <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
-                <path fill="currentColor" d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1 1 0 000-1.41l-2.34-2.34a1 1 0 00-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" />
-              </svg>
-            </button>
-            <button class="icon-btn" title="View" @click="modal = { config: row, mode: 'view' }">
-              <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
-                <path fill="currentColor" d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17a5 5 0 110-10 5 5 0 010 10zm0-8a3 3 0 100 6 3 3 0 000-6z" />
-              </svg>
-            </button>
-          </td> -->
-
-        <td class="center">
+          <td class="center">
             <div class="actions">
               <button class="icon-btn" title="Edit" @click="modal = { config: row, mode: 'edit' }">
                 <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">

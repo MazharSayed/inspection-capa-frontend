@@ -29,7 +29,7 @@ const statusOptions = [
 const dotColors = { approved: 'success', rejected: 'danger', pending: 'warning' }
 const dotsFor = (row) => row.approval_statuses.map((status) => dotColors[status])
 
-const { subDivisionOptions, activityOptions } = useCascadingFilters(selected)
+const { divisionOptions, subDivisionOptions, activityOptions, enabled } = useCascadingFilters(selected)
 const { rows, loading, error, load } = useFilteredList(fetchInspectionRequests, selected, search)
 
 onMounted(async () => {
@@ -49,10 +49,9 @@ onMounted(async () => {
     <div class="filter-row">
       <span class="filter-label">Filter By</span>
       <FilterSelect v-model="selected.project_id" :options="filters.projects" placeholder="Project" />
-      <FilterSelect v-model="selected.division_id" :options="filters.divisions" placeholder="Division" />
-      <FilterSelect v-model="selected.sub_division_id" :options="subDivisionOptions" placeholder="Sub-Division" />
-      <FilterSelect v-model="selected.activity_id" :options="activityOptions" placeholder="Activity" />
-      <FilterSelect v-model="selected.status" :options="statusOptions" placeholder="Status" />
+      <FilterSelect v-model="selected.division_id" :options="divisionOptions" placeholder="Division" :disabled="!enabled.division" />
+      <FilterSelect v-model="selected.sub_division_id" :options="subDivisionOptions" placeholder="Sub-Division" :disabled="!enabled.subDivision" />
+      <FilterSelect v-model="selected.activity_id" :options="activityOptions" placeholder="Activity" :disabled="!enabled.activity" />
     </div>
 
     <p v-if="error" class="state error">{{ error }}</p>

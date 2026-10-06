@@ -24,12 +24,6 @@ export const useFilterOptionsStore = defineStore('filterOptions', () => {
     loaded.value = true
   }
 
-  const subDivisionsFor = (divisionId) =>
-    divisionId ? subDivisions.value.filter((s) => s.division_id === divisionId) : subDivisions.value
-
-  const activitiesFor = (subDivisionId) =>
-    subDivisionId ? activities.value.filter((a) => a.sub_division_id === subDivisionId) : activities.value
-
   return {
     projects,
     divisions,
@@ -39,7 +33,5 @@ export const useFilterOptionsStore = defineStore('filterOptions', () => {
     statuses,
     loaded,
     load,
-    subDivisionsFor,
-    activitiesFor,
   }
 })

@@ -3,6 +3,7 @@ const props = defineProps({
   modelValue: { type: [Number, String], default: null },
   options: { type: Array, default: () => [] },
   placeholder: { type: String, required: true },
+  disabled: { type: Boolean, default: false },
 })
 
 const emit = defineEmits(['update:modelValue'])
@@ -14,7 +15,7 @@ function onChange(event) {
 </script>
 
 <template>
-  <select class="filter-select" :value="modelValue ?? ''" @change="onChange">
+  <select class="filter-select" :value="modelValue ?? ''" :disabled="disabled" @change="onChange">
     <option value="">{{ placeholder }}</option>
     <option v-for="option in options" :key="option.id" :value="option.id">
       {{ option.name }}
@@ -35,5 +36,11 @@ function onChange(event) {
 .filter-select:focus {
   outline: 2px solid var(--accent);
   outline-offset: 1px;
+}
+
+.filter-select:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  background: #f3f4f6;
 }
 </style>

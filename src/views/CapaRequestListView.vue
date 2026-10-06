@@ -17,18 +17,15 @@ const selected = reactive({
   division_id: null,
   sub_division_id: null,
   activity_id: null,
-  sub_activity: null,
+  sub_activity_id: null,
   created_at: '',
   status: null,
 })
 const search = ref('')
 
-const { subDivisionOptions, activityOptions } = useCascadingFilters(selected)
+const { divisionOptions, subDivisionOptions, activityOptions, subActivityOptions, enabled } =
+  useCascadingFilters(selected)
 const { rows, loading, error, load } = useFilteredList(fetchCapaRequests, selected, search)
-
-const subActivityOptions = computed(() =>
-  filters.subActivities.map((s) => ({ id: s.name, name: s.name })),
-)
 
 const statusOptions = computed(() =>
   filters.statuses.map((status) => ({
@@ -54,10 +51,10 @@ onMounted(async () => {
     <div class="filter-row">
       <span class="filter-label">Filter By</span>
       <FilterSelect v-model="selected.project_id" :options="filters.projects" placeholder="Project" />
-      <FilterSelect v-model="selected.division_id" :options="filters.divisions" placeholder="Division" />
-      <FilterSelect v-model="selected.sub_division_id" :options="subDivisionOptions" placeholder="Sub-Division" />
-      <FilterSelect v-model="selected.activity_id" :options="activityOptions" placeholder="Activity" />
-      <FilterSelect v-model="selected.sub_activity" :options="subActivityOptions" placeholder="Sub-Activity" />
+      <FilterSelect v-model="selected.division_id" :options="divisionOptions" placeholder="Division" :disabled="!enabled.division" />
+      <FilterSelect v-model="selected.sub_division_id" :options="subDivisionOptions" placeholder="Sub-Division" :disabled="!enabled.subDivision" />
+      <FilterSelect v-model="selected.activity_id" :options="activityOptions" placeholder="Activity" :disabled="!enabled.activity" />
+      <FilterSelect v-model="selected.sub_activity_id" :options="subActivityOptions" placeholder="Sub-Activity" :disabled="!enabled.subActivity" />
       <FilterDate v-model="selected.created_at" label="CAPA Created At" />
       <FilterSelect v-model="selected.status" :options="statusOptions" placeholder="Status" />
     </div>
