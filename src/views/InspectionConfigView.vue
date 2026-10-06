@@ -1,7 +1,9 @@
 <script setup>
-import { computed, onMounted, reactive, ref, watch } from 'vue'
+import { onMounted, reactive, ref } from 'vue'
 import { fetchInspectionConfigs } from '../api/inspectionConfigApi'
 import { useFilterOptionsStore } from '../stores/filterOptions'
+import { useCascadingFilters } from '../composables/useCascadingFilters'
+import { useFilteredList } from '../composables/useFilteredList'
 import ConfigModal from '../components/ConfigModal.vue'
 import FilterSelect from '../components/FilterSelect.vue'
 import LevelBadge from '../components/LevelBadge.vue'
@@ -16,66 +18,10 @@ const selected = reactive({
   activity_id: null,
 })
 const search = ref('')
-
-const rows = ref([])
-const loading = ref(false)
-const error = ref('')
 const modal = ref(null)
 
-const subDivisionOptions = computed(() => filters.subDivisionsFor(selected.division_id))
-
-const activityOptions = computed(() => {
-  if (selected.sub_division_id) return filters.activitiesFor(selected.sub_division_id)
-  if (selected.division_id) {
-    const ids = subDivisionOptions.value.map((s) => s.id)
-    return filters.activities.filter((a) => ids.includes(a.sub_division_id))
-  }
-  return filters.activities
-})
-
-let latestRequest = 0
-
-async function load() {
-  const requestId = ++latestRequest
-  loading.value = true
-  error.value = ''
-
-  const params = Object.fromEntries(
-    Object.entries({ ...selected, q: search.value.trim() }).filter(([, value]) => value),
-  )
-
-  try {
-    const data = await fetchInspectionConfigs(params)
-    if (requestId === latestRequest) rows.value = data
-  } catch {
-    if (requestId === latestRequest) error.value = 'Could not load the configurations.'
-  } finally {
-    if (requestId === latestRequest) loading.value = false
-  }
-}
-
-watch(
-  () => selected.division_id,
-  () => {
-    selected.sub_division_id = null
-    selected.activity_id = null
-  },
-)
-
-watch(
-  () => selected.sub_division_id,
-  () => {
-    selected.activity_id = null
-  },
-)
-
-watch(selected, load)
-
-let searchTimer
-watch(search, () => {
-  clearTimeout(searchTimer)
-  searchTimer = setTimeout(load, 300)
-})
+const { subDivisionOptions, activityOptions } = useCascadingFilters(selected)
+const { rows, loading, error, load } = useFilteredList(fetchInspectionConfigs, selected, search)
 
 function onSaved(updated) {
   rows.value = rows.value.map((row) => (row.id === updated.id ? updated : row))
