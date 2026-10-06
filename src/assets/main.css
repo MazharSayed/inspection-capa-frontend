@@ -130,3 +130,15 @@ input {
   height: 16px;
   background: var(--border);
 }
+
+.table-wrap {
+  overflow-x: auto;
+}
+
+.table-wrap .data-table {
+  min-width: 980px;
+}
+
+.data-table td.nowrap {
+  white-space: nowrap;
+}
