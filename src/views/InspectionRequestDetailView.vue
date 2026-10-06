@@ -4,6 +4,7 @@ import { useRoute } from 'vue-router'
 import { fetchInspectionRequest } from '../api/inspectionRequestApi'
 import { formatDate, formatTime } from '../utils/date'
 import ApprovalTimeline from '../components/ApprovalTimeline.vue'
+import DocumentPreviewModal from '../components/DocumentPreviewModal.vue'
 import PageHeader from '../components/PageHeader.vue'
 import StatusBadge from '../components/StatusBadge.vue'
 
@@ -12,6 +13,7 @@ const route = useRoute()
 const request = ref(null)
 const loading = ref(false)
 const error = ref('')
+const preview = ref(null)
 
 const dotColors = { approved: 'success', rejected: 'danger', pending: 'warning' }
 
@@ -23,6 +25,8 @@ const detailFields = computed(() => {
   const d = request.value?.details
   if (!d) return []
 
+  const c = request.value.capa
+
   return [
     { label: 'Floor', value: d.floor },
     { label: 'Unit', value: d.unit },
@@ -30,6 +34,13 @@ const detailFields = computed(() => {
     { label: 'Sub Division', value: d.sub_division },
     { label: 'Activity', value: d.activity },
     { label: 'Sub Activity', value: d.sub_activity },
+    ...(c
+      ? [
+          { label: 'Defect Type', value: c.defect_type },
+          { label: 'Defect Count', value: c.defect_count },
+          { label: 'Approver', value: c.approver },
+        ]
+      : []),
     { label: 'Technician', value: d.technician, wide: true },
   ]
 })
@@ -52,10 +63,6 @@ async function load(id) {
 }
 
 watch(() => route.params.id, load, { immediate: true })
-
-function openDocument(event, url) {
-  if (!url || url === '#') event.preventDefault()
-}
 </script>
 
 <template>
@@ -101,19 +108,13 @@ function openDocument(event, url) {
         <ul v-if="request.documents.length" class="documents">
           <li v-for="doc in request.documents" :key="doc.id">
             <span>{{ doc.name }}</span>
-            <a
-              class="view"
-              :href="doc.url"
-              target="_blank"
-              rel="noopener"
-              @click="openDocument($event, doc.url)"
-            >
+            <button class="view" type="button" @click="preview = doc">
               View
               <svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true">
                 <path d="M2 12s3.5-6.5 10-6.5S22 12 22 12s-3.5 6.5-10 6.5S2 12 2 12z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" />
                 <circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" stroke-width="1.8" />
               </svg>
-            </a>
+            </button>
           </li>
         </ul>
       </div>
@@ -124,6 +125,14 @@ function openDocument(event, url) {
       </div>
     </div>
   </section>
+
+  <DocumentPreviewModal
+    v-if="preview"
+    :key="preview.id"
+    :title="preview.name"
+    :url="preview.url"
+    @close="preview = null"
+  />
 </template>
 
 <style scoped>
@@ -136,7 +145,7 @@ function openDocument(event, url) {
 }
 
 .summary h2 {
-  font-size: 16px;
+  font-size: 18px;
   font-weight: 600;
   margin-right: 8px;
 }
@@ -145,18 +154,18 @@ function openDocument(event, url) {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  font-size: 12px;
+  font-size: 13.5px;
   color: var(--text-muted);
 }
 
 .body {
   display: grid;
-  grid-template-columns: 320px 1fr;
+  grid-template-columns: 360px 1fr;
   gap: 36px;
 }
 
 h3 {
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 600;
   margin-bottom: 18px;
 }
@@ -172,13 +181,13 @@ h3 {
 }
 
 dt {
-  font-size: 11px;
+  font-size: 12.5px;
   color: var(--text-muted);
 }
 
 dd {
   margin-top: 3px;
-  font-size: 13px;
+  font-size: 15px;
   font-weight: 600;
 }
 
@@ -194,7 +203,8 @@ dd {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  font-size: 12px;
+  font-size: 14px;
+  line-height: 20px;
   color: var(--text-muted);
 }
 
@@ -202,9 +212,22 @@ dd {
   display: inline-flex;
   align-items: center;
   gap: 6px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  font-size: inherit;
+  line-height: 18px;
   font-weight: 600;
   color: var(--text);
-  text-decoration: none;
+}
+
+.view svg {
+  display: block;
+  flex-shrink: 0;
+}
+
+.view:hover {
+  color: var(--accent);
 }
 
 @media (max-width: 900px) {
