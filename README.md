@@ -51,6 +51,3 @@ src/
 
 ### Inspection Configuration
 ![Inspection Configuration](docs/screenshots/01-inspection-configuration.png)
-
-### CAPA Requests List
-![CAPA Requests
